@@ -1,0 +1,30 @@
+ name: Parks fact-check refresh
+
+  on:
+    schedule:
+      # 01:30 UTC = 07:00 IST, 13:30 UTC = 19:00 IST
+      - cron: '30 1 * * *'
+      - cron: '30 13 * * *'
+    workflow_dispatch: {}
+
+  permissions:
+    contents: write
+
+  jobs:
+    refresh:
+      runs-on: ubuntu-latest
+      steps:
+        - uses: actions/checkout@v4
+        - uses: actions/setup-python@v5
+          with:
+            python-version: '3.11'
+        - run: pip install feedparser==6.0.11
+        - run: python scripts/fetch-updates.py
+        - name: Commit updated data
+          run: |
+            git config user.name "hyderabadparks-bot"
+            git config user.email "bot@hyderabadparksforpeople.local"
+            git add data/updates data/review-queue || true
+            git diff --staged --quiet || git commit -m "auto: refresh updates [$(date -u 
+  +'%Y-%m-%d %H:%M UTC')]"
+            git push
