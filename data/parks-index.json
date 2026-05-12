@@ -1,0 +1,11 @@
+{
+  "parks": [
+    {
+      "id": "kbr",
+      "name": "KBR National Park",
+      "status": "ACTIVE_ALERT",
+      "dataFile": "data/parks/kbr.json",
+      "updatesFile": "data/updates/kbr.json"
+    }
+  ]
+}

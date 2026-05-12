@@ -1,0 +1,73 @@
+{
+  "id": "kbr",
+  "name": "Kasu Brahmananda Reddy National Park",
+  "shortName": "KBR National Park",
+  "area": "390 acres (142.5 Ha)",
+  "location": "Jubilee Hills / Banjara Hills / Film Nagar, Hyderabad",
+  "notificationDate": "5 December 1998",
+  "notificationGO": "GO Ms. No. 187 EFS&T",
+  "originalGO": "GO Ms. No. 22 dated 3 Feb 1994 (Secured Forest, AP Forest Act 1967)",
+  "ESZ": "SO 3425(E), October 2020 — as narrow as 3 metres in places",
+  "managedBy": "Telangana Forest Department",
+  "projectName": "H-CITI (Hyderabad City Innovative and Transformative Infrastructure)",
+  "projectScope": "7 flyovers (4.6 km total) + 7 underpasses (2.8 km) encircling the park",
+  "projectBudget": "₹2,654 crore (Telangana Budget 2025-26)",
+  "projectContractor": "Megha Engineering and Infrastructures Limited (MEIL)",
+  "treesApprovedForFelling": 1942,
+  "treesAlreadyFelled": 1532,
+  "treesMarkedForTranslocation": 380,
+  "alertStatus": "ACTIVE",
+  "contacts": [
+    {
+      "role": "GHMC Commissioner",
+      "name": "R.V. Karnan, IAS",
+      "authority": "Greater Hyderabad Municipal Corporation",
+      "note": "Executing authority for H-CITI. Reviewed KBR flyover site 30 March 2026.",
+      "email": "commissionerghmc@ghmc.gov.in",
+      "phone": "040-23225890",
+      "mailSubject": "Urgent: Halt illegal tree felling at KBR National Park — H-CITI project"
+    },
+    {
+      "role": "Principal Chief Conservator of Forests",
+      "name": "[Verify at forests.telangana.gov.in]",
+      "authority": "Telangana Forest Department",
+      "note": "Head of dept that manages KBR. Must personally approve all permissions under WPA.",
+      "email": "pccf-hoff@telangana.gov.in",
+      "phone": "040-23450303",
+      "mailSubject": "Urgent: Halt tree felling at KBR National Park — WPA S.29 violation"
+    },
+    {
+      "role": "Khairatabad Zonal Commissioner",
+      "name": "Anurag Jayanthi",
+      "authority": "GHMC Khairatabad Zone (covers KBR area)",
+      "email": "zckhairatabad@ghmc.gov.in",
+      "phone": "040-23225891",
+      "mailSubject": "Urgent: Stop H-CITI construction at KBR National Park"
+    }
+  ],
+  "timeline": [
+    {"date":"3 Feb 1994","type":"legal","text":"Notified as Secured Forest (Jubilee Hills Forest) under AP Forest Act 1967 — GO Ms. No. 22"},
+    {"date":"5 Dec 1998","type":"legal","text":"Notified as KBR National Park under WPA 1972 — GO Ms. No. 187 EFS&T. One of only two National Parks inside an Indian metropolitan city."},
+    {"date":"2015–2019","type":"legal","text":"SRDP project (6 flyovers) proposed. NGT orders status quo. 'Save KBR' citizen movement forms."},
+    {"date":"Oct 2020","type":"legal","text":"ESZ notified — SO 3425(E). As narrow as 3 metres — well below NBWL recommendation."},
+    {"date":"Mar 2025","type":"contested","text":"GO Rt. Nos. 125 & 126 invoke RFCTLARR S.10A to acquire 332 properties (65,876 sq yards), bypassing SIA and public hearing."},
+    {"date":"2025–26 Budget","type":"contested","text":"H-CITI allocated ₹2,654 crore. MEIL awarded contract. 7 flyovers + 7 underpasses encircling park."},
+    {"date":"Mar 2026","type":"violation","text":"Construction begins. 1,532 trees felled. Dr. Lubna Sarwath files formal representation alleging no valid WALTA designated-officer approval."},
+    {"date":"30 Mar 2026","type":"violation","text":"Telangana HC (CJ Aparesh Kumar Singh + J. G.M. Mohiuddin) refuses stay. Case adjourned to 5 May 2026."},
+    {"date":"7 May 2026","type":"violation","text":"Gen Z-led protest outside KBR main gate. 1,800 more trees marked."}
+  ],
+  "violations": [
+    {"law":"WALTA Act 2002","section":"Designated Officer approval","what":"Felling requires prior approval from designated officer of Hyderabad District WALTA Authority","status":"BREACHED","detail":"Dr. Sarwath: no valid permission obtained. Project acting ultra vires."},
+    {"law":"WALTA Act 2002","section":"Tree Protection Committee","what":"Validly constituted TPC must oversee large-scale felling","status":"BREACHED","detail":"TPC members serving beyond stipulated tenures."},
+    {"law":"Wildlife Protection Act 1972","section":"Section 29","what":"No destruction of vegetation in National Park without CWW written permission","status":"UNDER CHALLENGE","detail":"PIL in Telangana HC. Stay refused 31 Mar 2026. Next hearing 5 May 2026."},
+    {"law":"RFCTLARR Act 2013","section":"Section 10A","what":"Acquisition requires Social Impact Assessment and public hearing","status":"BYPASSED","detail":"GO Rt. 125 & 126 invoked S.10A exemption."},
+    {"law":"EIA Notification 2006","section":"Cumulative impact","what":"Projects affecting ecology require EIA","status":"EVADED","detail":"H-CITI split into 2 EPC packages, each below threshold."},
+    {"law":"Environment Protection Act 1986","section":"ESZ requirements","what":"National Parks require adequate Eco-Sensitive Zone buffer","status":"INADEQUATE","detail":"ESZ in places only 3 metres wide."}
+  ],
+  "evidenceLog": [
+    {"date":"5 Dec 1998","description":"KBR notified as National Park under WPA 1972","source":"GO Ms. No. 187 EFS&T","status":"verified"},
+    {"date":"Oct 2020","description":"ESZ notified, in places only 3 metres wide","source":"Gazette SO 3425(E)","status":"verified"},
+    {"date":"Mar 2025","description":"S.10A invoked to bypass SIA for 332 properties","source":"GO Rt. Nos. 125 & 126","status":"verified"},
+    {"date":"30 Mar 2026","description":"Telangana HC refuses stay on tree felling, adjourns to 5 May 2026","source":"Telangana HC daily order — CJ Aparesh Kumar Singh + J. G.M. Mohiuddin","status":"verified"}
+  ]
+}

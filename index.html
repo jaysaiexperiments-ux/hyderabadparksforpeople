@@ -1,0 +1,665 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Hyderabad Parks For People — Civic Accountability</title>
+<meta name="description" content="Open-source accountability tool for Hyderabad's parks. Currently tracking KBR National Park." />
+<meta name="robots" content="index,follow" />
+<style>
+  :root{
+    --ink:#1a1a1a;
+    --ink-soft:#3a3a3a;
+    --muted:#6b6b6b;
+    --line:#e4e4e4;
+    --bg:#ffffff;
+    --bg-soft:#fafafa;
+    --green:#2d6a4f;
+    --green-soft:#e8f1ec;
+    --red:#b91c1c;
+    --red-soft:#fdecec;
+    --amber:#b45309;
+    --amber-soft:#fdf3e3;
+    --max:920px;
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0;padding:0;background:var(--bg);color:var(--ink);
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    font-size:16px;line-height:1.55;-webkit-font-smoothing:antialiased}
+  a{color:var(--green);text-decoration:underline;text-underline-offset:2px}
+  a:hover{text-decoration-thickness:2px}
+  .wrap{max-width:var(--max);margin:0 auto;padding:0 20px}
+
+  /* Header */
+  header.site{border-bottom:1px solid var(--line);padding:28px 0 20px;background:var(--bg)}
+  .head-row{display:flex;justify-content:space-between;align-items:flex-start;gap:16px;flex-wrap:wrap}
+  h1.brand{font-size:28px;margin:0 0 6px;letter-spacing:-0.01em;font-weight:700}
+  h1.brand .leaf{color:var(--green)}
+  .sub{color:var(--muted);font-size:15px;margin:0;max-width:640px}
+  .freshness{font-size:12.5px;color:var(--muted);text-align:right;line-height:1.45;min-width:200px}
+  .freshness.stale{color:var(--amber)}
+  .freshness strong{color:var(--ink-soft);font-weight:600}
+
+  /* Alert banner */
+  .alert{background:var(--red);color:#fff;padding:14px 0;font-size:15px;font-weight:500}
+  .alert .wrap{display:flex;gap:10px;align-items:flex-start}
+  .alert .icon{font-weight:700}
+
+  /* Sections */
+  section{padding:36px 0;border-bottom:1px solid var(--line)}
+  section h2{font-size:20px;margin:0 0 6px;letter-spacing:-0.005em;font-weight:700}
+  section .lede{color:var(--muted);font-size:14px;margin:0 0 18px}
+  section p{margin:0 0 12px}
+
+  /* Legal chain */
+  .chain{display:grid;grid-template-columns:1fr;gap:14px;margin-top:8px}
+  @media (min-width:720px){.chain{grid-template-columns:1fr 1fr 1fr;align-items:stretch}}
+  .chain-box{border:1px solid var(--line);border-radius:6px;padding:14px;background:var(--bg-soft);position:relative}
+  .chain-box .label{font-size:11px;text-transform:uppercase;letter-spacing:0.08em;color:var(--muted);margin-bottom:6px}
+  .chain-box .name{font-weight:600;color:var(--ink);font-size:15px;margin-bottom:4px}
+  .chain-box .meta{font-size:13px;color:var(--ink-soft)}
+  .chain-box.flag{border-color:var(--red);background:var(--red-soft)}
+  .chain-box .badge{display:inline-block;margin-top:8px;font-size:12px;font-weight:600;color:var(--red);
+    background:#fff;border:1px solid var(--red);padding:4px 8px;border-radius:4px}
+  .chain-arrow{display:none;color:var(--muted);font-size:18px;align-self:center;text-align:center}
+  @media (min-width:720px){.chain.with-arrows{grid-template-columns:1fr 24px 1fr 24px 1fr}
+    .chain-arrow{display:block}}
+
+  /* Cards (contacts) */
+  .cards{display:grid;grid-template-columns:1fr;gap:14px}
+  @media (min-width:720px){.cards{grid-template-columns:1fr 1fr}}
+  .card{border:1px solid var(--line);border-radius:6px;padding:16px;background:var(--bg)}
+  .card .role{font-size:11px;text-transform:uppercase;letter-spacing:0.08em;color:var(--green);font-weight:600;margin-bottom:4px}
+  .card .name{font-weight:600;font-size:16px;margin-bottom:2px}
+  .card .auth{color:var(--ink-soft);font-size:13px;margin-bottom:8px}
+  .card .note{color:var(--muted);font-size:13px;margin-bottom:10px;font-style:italic}
+  .card .detail{font-size:13.5px;color:var(--ink-soft);margin:2px 0}
+  .card .detail a{color:var(--ink-soft)}
+  .btn{display:inline-block;background:var(--green);color:#fff;text-decoration:none;
+    padding:8px 14px;border-radius:4px;font-size:13.5px;font-weight:500;margin-top:10px;
+    border:1px solid var(--green);cursor:pointer}
+  .btn:hover{background:#235640;border-color:#235640;text-decoration:none}
+  .btn.ghost{background:transparent;color:var(--green)}
+  .btn.ghost:hover{background:var(--green-soft);color:var(--green)}
+
+  /* Updates list */
+  .update-item{padding:12px 0;border-bottom:1px dashed var(--line)}
+  .update-item:last-child{border-bottom:none}
+  .update-item .meta{font-size:12.5px;color:var(--muted);margin-bottom:3px}
+  .update-item .headline{font-size:15px;line-height:1.45}
+  .update-item .headline a{color:var(--ink);text-decoration:none;border-bottom:1px solid var(--line)}
+  .update-item .headline a:hover{border-bottom-color:var(--green);color:var(--green)}
+  .tag{display:inline-block;font-size:11px;font-weight:600;padding:2px 7px;border-radius:3px;
+    margin-left:8px;vertical-align:middle;text-transform:uppercase;letter-spacing:0.04em}
+  .tag.pending{background:var(--amber-soft);color:var(--amber)}
+  .empty{color:var(--muted);font-style:italic;font-size:14px;padding:8px 0}
+
+  /* Timeline */
+  .timeline{margin-top:8px}
+  .tl-item{border-left:3px solid var(--line);padding:8px 0 8px 14px;margin-bottom:10px}
+  .tl-item.legal{border-left-color:var(--green)}
+  .tl-item.contested{border-left-color:var(--amber)}
+  .tl-item.violation{border-left-color:var(--red)}
+  .tl-item .date{font-size:12.5px;color:var(--muted);font-weight:600;margin-bottom:2px;
+    text-transform:uppercase;letter-spacing:0.04em}
+  .tl-item .text{font-size:14.5px;color:var(--ink-soft)}
+
+  /* Violations table */
+  .vtable{width:100%;border-collapse:collapse;font-size:13.5px;margin-top:6px}
+  .vtable th,.vtable td{border-bottom:1px solid var(--line);padding:10px 8px;text-align:left;vertical-align:top}
+  .vtable th{font-weight:600;font-size:12px;text-transform:uppercase;letter-spacing:0.04em;color:var(--muted);background:var(--bg-soft)}
+  .vtable td.law{font-weight:600;color:var(--ink);white-space:nowrap}
+  .vtable td.what{color:var(--ink-soft)}
+  .vtable td.detail{color:var(--muted);font-size:13px}
+  .status-badge{display:inline-block;font-size:11px;font-weight:700;padding:3px 8px;border-radius:3px;text-transform:uppercase;letter-spacing:0.05em;white-space:nowrap}
+  .status-BREACHED,.status-EVADED,.status-BYPASSED{background:var(--red-soft);color:var(--red)}
+  .status-UNDERCHALLENGE,.status-INADEQUATE{background:var(--amber-soft);color:var(--amber)}
+  .vtable .scroll{overflow-x:auto}
+  @media (max-width:640px){
+    .vtable, .vtable thead, .vtable tbody, .vtable tr, .vtable td, .vtable th{display:block}
+    .vtable thead{display:none}
+    .vtable tr{border:1px solid var(--line);border-radius:4px;padding:8px;margin-bottom:10px}
+    .vtable td{border:none;padding:4px 0}
+    .vtable td::before{content:attr(data-label);display:block;font-size:11px;text-transform:uppercase;letter-spacing:0.04em;color:var(--muted);margin-bottom:2px}
+  }
+
+  /* Action buttons */
+  .actions{display:grid;grid-template-columns:1fr;gap:10px}
+  @media (min-width:640px){.actions{grid-template-columns:repeat(3,1fr)}}
+  .action-btn{display:block;width:100%;padding:14px 16px;background:var(--bg);border:1px solid var(--green);
+    color:var(--green);border-radius:6px;font-size:14.5px;font-weight:600;text-align:left;cursor:pointer;
+    text-decoration:none;transition:background .15s ease}
+  .action-btn:hover{background:var(--green-soft)}
+  .action-btn .ico{display:inline-block;margin-right:6px;font-weight:700}
+  .action-btn .sub{display:block;font-weight:400;font-size:12.5px;color:var(--muted);margin-top:3px}
+
+  /* Modal */
+  .modal-back{position:fixed;inset:0;background:rgba(20,20,20,0.5);display:none;align-items:flex-start;justify-content:center;z-index:50;overflow-y:auto;padding:40px 16px}
+  .modal-back.open{display:flex}
+  .modal{background:#fff;border-radius:8px;max-width:680px;width:100%;padding:24px;box-shadow:0 12px 40px rgba(0,0,0,0.18)}
+  .modal h3{margin:0 0 8px;font-size:18px}
+  .modal p.help{color:var(--muted);font-size:13px;margin:0 0 14px}
+  .modal textarea{width:100%;min-height:340px;font:13.5px/1.55 ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
+    border:1px solid var(--line);border-radius:4px;padding:12px;background:var(--bg-soft);resize:vertical;color:var(--ink-soft)}
+  .modal-row{display:flex;gap:8px;justify-content:flex-end;margin-top:14px;flex-wrap:wrap}
+
+  /* Toast */
+  .toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%);background:var(--ink);color:#fff;
+    padding:10px 18px;border-radius:4px;font-size:14px;opacity:0;pointer-events:none;transition:opacity .2s ease;z-index:60}
+  .toast.show{opacity:1}
+
+  /* Contributor + footer */
+  .contrib-buttons{display:grid;grid-template-columns:1fr;gap:10px;margin-top:14px}
+  @media (min-width:640px){.contrib-buttons{grid-template-columns:1fr 1fr}}
+  footer.site{padding:28px 0 40px;font-size:13px;color:var(--muted);line-height:1.6}
+  footer.site a{color:var(--muted)}
+  .trust{background:var(--green-soft);border-left:3px solid var(--green);padding:14px 16px;border-radius:4px;
+    font-size:13px;color:var(--ink-soft);margin-top:6px}
+  .trust strong{color:var(--green)}
+  .trust ul{margin:8px 0 0;padding-left:20px}
+  .trust li{margin-bottom:3px}
+
+  /* Definition list (key facts) */
+  .facts{display:grid;grid-template-columns:1fr;gap:6px;margin:10px 0 0;font-size:14px}
+  @media (min-width:640px){.facts{grid-template-columns:max-content 1fr;column-gap:18px;row-gap:6px}}
+  .facts dt{color:var(--muted);font-weight:500}
+  .facts dd{margin:0;color:var(--ink-soft)}
+
+  /* Print-friendly */
+  @media print{
+    .alert,.btn,.action-btn,.modal-back,.toast,.freshness{display:none !important}
+    section{border-bottom:1px solid #ccc;page-break-inside:avoid}
+    a{color:#000;text-decoration:underline}
+  }
+</style>
+</head>
+<body>
+
+<!-- 1. SITE HEADER -->
+<header class="site">
+  <div class="wrap head-row">
+    <div>
+      <h1 class="brand">Hyderabad Parks <span class="leaf">For People</span></h1>
+      <p class="sub">An open-source accountability tool for Hyderabad's parks. Currently tracking: <strong>KBR National Park</strong>.</p>
+    </div>
+    <div class="freshness" id="freshness" aria-live="polite">
+      <strong>Last fact-checked:</strong> loading…<br/>
+      Auto-refreshes 7am + 7pm IST.
+    </div>
+  </div>
+</header>
+
+<!-- 2. ALERT BANNER -->
+<div class="alert" id="alertBanner" role="alert">
+  <div class="wrap">
+    <span class="icon">⚠</span>
+    <span id="alertText">ACTIVE ALERT: 1,532 trees felled at KBR National Park. Construction ongoing — legal challenge in Telangana HC.</span>
+  </div>
+</div>
+
+<main>
+
+<!-- 4. WHAT IS HAPPENING -->
+<section id="what">
+  <div class="wrap">
+    <h2>What is happening</h2>
+    <p class="lede" id="whatLede">Loading park summary…</p>
+    <dl class="facts" id="factsList"></dl>
+  </div>
+</section>
+
+<!-- 5. LEGAL CHAIN -->
+<section id="chain">
+  <div class="wrap">
+    <h2>Legal chain of responsibility</h2>
+    <p class="lede">Who notified the park, who manages it day-to-day, who is executing the disputed project.</p>
+    <div class="chain with-arrows">
+      <div class="chain-box">
+        <div class="label">Park Ownership</div>
+        <div class="name" id="ownerName">—</div>
+        <div class="meta" id="ownerMeta">—</div>
+      </div>
+      <div class="chain-arrow">→</div>
+      <div class="chain-box">
+        <div class="label">Operational Control</div>
+        <div class="name" id="opsName">—</div>
+        <div class="meta" id="opsMeta">—</div>
+      </div>
+      <div class="chain-arrow">→</div>
+      <div class="chain-box flag">
+        <div class="label">Project Executing Authority</div>
+        <div class="name" id="projName">—</div>
+        <div class="meta" id="projMeta">—</div>
+        <div class="badge">⚠ Valid WALTA permission: NOT OBTAINED per Dr. Lubna Sarwath</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 6. WHO IS ACCOUNTABLE -->
+<section id="accountable">
+  <div class="wrap">
+    <h2>Who is accountable</h2>
+    <p class="lede">Public officials whose decisions or authority directly bear on this case. Contact details from public sources.</p>
+    <div class="cards" id="contactsList"></div>
+  </div>
+</section>
+
+<!-- 7. LATEST UPDATES -->
+<section id="updates">
+  <div class="wrap">
+    <h2>Latest updates</h2>
+    <p class="lede">Sourced from Google News every 12 hours. Verified items get merged into the timeline by maintainers.</p>
+    <div id="updatesList"><p class="empty">Loading updates…</p></div>
+  </div>
+</section>
+
+<!-- 8. LEGAL TIMELINE -->
+<section id="timeline">
+  <div class="wrap">
+    <h2>Legal timeline</h2>
+    <p class="lede">Maintainer-curated. Color-coded — green: legal status events, amber: contested actions, red: alleged violations.</p>
+    <div class="timeline" id="timelineList"></div>
+  </div>
+</section>
+
+<!-- 9. POTENTIAL LEGAL VIOLATIONS -->
+<section id="violations">
+  <div class="wrap">
+    <h2>Potential legal violations</h2>
+    <p class="lede">Each row maps a specific statutory requirement to its alleged current status.</p>
+    <div class="scroll">
+      <table class="vtable" id="vtable">
+        <thead><tr><th>Law</th><th>Requirement</th><th>Status</th><th>Detail</th></tr></thead>
+        <tbody id="vtableBody"></tbody>
+      </table>
+    </div>
+  </div>
+</section>
+
+<!-- 10. TAKE ACTION -->
+<section id="act">
+  <div class="wrap">
+    <h2>Take action</h2>
+    <p class="lede">Three concrete actions any citizen can take in under 10 minutes.</p>
+    <div class="actions">
+      <button class="action-btn" onclick="openModal('rti')"><span class="ico">📄</span>File an RTI<span class="sub">Pre-filled questions to the PIO, Telangana Forest Dept.</span></button>
+      <button class="action-btn" onclick="openModal('complaint')"><span class="ico">✉</span>Send a complaint<span class="sub">Pre-written letter to District Collector, Hyderabad.</span></button>
+      <button class="action-btn" onclick="sharePage()"><span class="ico">🔗</span>Share this page<span class="sub">Copy the URL to send to friends &amp; press.</span></button>
+    </div>
+  </div>
+</section>
+
+<!-- 11. EVIDENCE LOG -->
+<section id="evidence">
+  <div class="wrap">
+    <h2>Evidence log</h2>
+    <p class="lede">Verified facts, each tied to a public source. Maintainers update this manually.</p>
+    <div class="scroll">
+      <table class="vtable">
+        <thead><tr><th>Date</th><th>Description</th><th>Source</th><th>Status</th></tr></thead>
+        <tbody id="evidenceBody"></tbody>
+      </table>
+    </div>
+  </div>
+</section>
+
+<!-- 12. CONTRIBUTOR SECTION -->
+<section id="contribute">
+  <div class="wrap">
+    <h2>Help keep this accurate</h2>
+    <p>Hyderabad Parks For People is open source and citizen-maintained. If you spot an outdated official, a missed court order, a broken link, or have a verified update, please write in. We respond within 48 hours and credit contributors (or stay anonymous on request).</p>
+    <div class="contrib-buttons">
+      <a class="action-btn" href="mailto:notforprofuse123@gmail.com?subject=Hyderabad%20Parks%20For%20People%20%E2%80%94%20Issue%20or%20fix%20suggestion&body=Page%20section%3A%20%0AWhat%20I%20noticed%3A%20%0ASuggested%20fix%3A%20%0ASource%2Flink%20(if%20any)%3A%20%0A">
+        <span class="ico">🐛</span>Report an issue / suggest a fix
+        <span class="sub">Opens your mail client with a short form.</span>
+      </a>
+      <a class="action-btn" href="mailto:notforprofuse123@gmail.com?subject=Hyderabad%20Parks%20For%20People%20%E2%80%94%20Verified%20update%20submission&body=Park%3A%20KBR%20National%20Park%0ADate%20of%20event%3A%20%0AWhat%20happened%3A%20%0ASource%20URL%20(news%20outlet%2C%20court%20order%2C%20or%20official%20document)%3A%20%0ASecondary%20source%20(optional)%3A%20%0A">
+        <span class="ico">✓</span>Submit verified update
+        <span class="sub">Court orders, news links, official docs.</span>
+      </a>
+    </div>
+    <div class="trust" style="margin-top:18px">
+      <strong>Trust guarantees</strong>
+      <ul>
+        <li>Auto-fetched news items are labeled "pending verification" and never enter the main timeline without human review.</li>
+        <li>Maintainer-curated park JSON drives the legal claims, timeline, and contacts on this page.</li>
+        <li>The twice-daily automation modifies <em>only</em> <code>data/updates/[id].json</code> and <code>data/review-queue/[id].json</code>.</li>
+        <li>No external trackers, analytics, or cookies. Page works offline once loaded.</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+</main>
+
+<!-- 13. FOOTER -->
+<footer class="site">
+  <div class="wrap">
+    <p><strong>Hyderabad Parks For People</strong> — an open-source civic accountability project.</p>
+    <p>Data sources: Telangana High Court orders, Siasat.com, News Minute, The South First, Deccan Chronicle, public GHMC records. Auto-fact-checked twice daily via Google News RSS. Maintainers verify all flagged items before they enter the main record.</p>
+    <p>Not affiliated with any political party.</p>
+    <p>Repo: <a href="https://github.com/jaysaiexperiments-ux/hyderabadparksforpeople">github.com/jaysaiexperiments-ux/hyderabadparksforpeople</a><br/>
+    Contact: <a href="mailto:notforprofuse123@gmail.com">notforprofuse123@gmail.com</a></p>
+  </div>
+</footer>
+
+<!-- Modals -->
+<div class="modal-back" id="modalBack" onclick="if(event.target===this)closeModal()">
+  <div class="modal" role="dialog" aria-modal="true">
+    <h3 id="modalTitle">Action</h3>
+    <p class="help" id="modalHelp"></p>
+    <textarea id="modalBody" spellcheck="false"></textarea>
+    <div class="modal-row">
+      <button class="btn ghost" onclick="closeModal()">Close</button>
+      <button class="btn ghost" onclick="copyModal()">Copy text</button>
+      <a class="btn" id="modalMail" href="#">Open in email</a>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast" role="status">Copied!</div>
+
+<script>
+/* =========================================================
+   Hyderabad Parks For People — page logic
+   - Loads parks-index.json, picks the first park
+   - Fetches park data + updates JSON in parallel
+   - Renders all sections; degrades gracefully if updates fail
+   ========================================================= */
+
+const $ = (id) => document.getElementById(id);
+
+async function loadData(){
+  try{
+    const idx = await fetch('./data/parks-index.json',{cache:'no-store'}).then(r=>r.json());
+    const park = idx.parks[0];
+    const [data, updates] = await Promise.all([
+      fetch('./'+park.dataFile,{cache:'no-store'}).then(r=>r.json()),
+      fetch('./'+park.updatesFile,{cache:'no-store'}).then(r=>r.json()).catch(()=>({items:[], lastChecked:null}))
+    ]);
+    render(data, updates);
+  }catch(err){
+    console.error(err);
+    document.body.insertAdjacentHTML('afterbegin',
+      '<div style="background:#b91c1c;color:#fff;padding:14px;text-align:center">'+
+      'Failed to load park data. Try a hard refresh.</div>');
+  }
+}
+
+function render(p, u){
+  renderFreshness(u);
+  renderAlert(p);
+  renderWhat(p);
+  renderChain(p);
+  renderContacts(p);
+  renderUpdates(u);
+  renderTimeline(p);
+  renderViolations(p);
+  renderEvidence(p);
+}
+
+function renderFreshness(u){
+  const el = $('freshness');
+  if(!u.lastChecked){
+    el.innerHTML = '<strong>Last fact-checked:</strong> awaiting first run<br/>Auto-refreshes 7am + 7pm IST.';
+    return;
+  }
+  const d = new Date(u.lastChecked);
+  const hours = (Date.now()-d.getTime())/36e5;
+  const fmt = d.toLocaleString('en-IN',{
+    timeZone:'Asia/Kolkata', day:'2-digit', month:'short', hour:'2-digit', minute:'2-digit'
+  });
+  el.innerHTML = '<strong>Last fact-checked:</strong> '+fmt+' IST<br/>Auto-refreshes 7am + 7pm IST.';
+  el.classList.toggle('stale', hours > 24);
+}
+
+function renderAlert(p){
+  if(p.alertStatus !== 'ACTIVE'){ $('alertBanner').style.display='none'; return; }
+  $('alertText').textContent =
+    'ACTIVE ALERT: '+p.treesAlreadyFelled.toLocaleString('en-IN')+
+    ' trees felled at '+p.shortName+'. Construction ongoing — legal challenge in Telangana HC.';
+}
+
+function renderWhat(p){
+  $('whatLede').innerHTML =
+    p.shortName+' ('+p.area+', notified '+p.notificationDate+' under WPA 1972) is the subject of the <strong>'+
+    p.projectName+'</strong> infrastructure project — '+p.projectScope+', budget '+p.projectBudget+
+    '. As of the most recent verified update, <strong>'+p.treesAlreadyFelled.toLocaleString('en-IN')+
+    '</strong> of '+p.treesApprovedForFelling.toLocaleString('en-IN')+
+    ' approved trees have been felled. A legal challenge is pending in the Telangana High Court.';
+
+  const facts = [
+    ['Area', p.area],
+    ['Location', p.location],
+    ['Notified', p.notificationDate+' — '+p.notificationGO],
+    ['Original status', p.originalGO],
+    ['ESZ', p.ESZ],
+    ['Managed by', p.managedBy],
+    ['Project', p.projectName],
+    ['Project contractor', p.projectContractor],
+    ['Project budget', p.projectBudget],
+    ['Trees approved for felling', p.treesApprovedForFelling.toLocaleString('en-IN')],
+    ['Trees already felled', p.treesAlreadyFelled.toLocaleString('en-IN')],
+    ['Trees marked for translocation', p.treesMarkedForTranslocation.toLocaleString('en-IN')]
+  ];
+  $('factsList').innerHTML = facts.map(([k,v])=>'<dt>'+esc(k)+'</dt><dd>'+esc(v)+'</dd>').join('');
+}
+
+function renderChain(p){
+  $('ownerName').textContent = 'Govt. of Telangana';
+  $('ownerMeta').textContent = 'Notified '+p.notificationDate+' — '+p.notificationGO;
+  $('opsName').textContent = p.managedBy;
+  $('opsMeta').textContent = 'Operates KBR under Wildlife Protection Act 1972, S.29';
+  $('projName').textContent = p.projectContractor;
+  $('projMeta').textContent = p.projectName+' — executed by GHMC';
+}
+
+function renderContacts(p){
+  $('contactsList').innerHTML = p.contacts.map(c=>{
+    const mailto = 'mailto:'+encodeURIComponent(c.email)+
+      '?subject='+encodeURIComponent(c.mailSubject||'')+
+      '&body='+encodeURIComponent(defaultContactBody(p, c));
+    return ''+
+    '<div class="card">'+
+      '<div class="role">'+esc(c.role)+'</div>'+
+      '<div class="name">'+esc(c.name)+'</div>'+
+      '<div class="auth">'+esc(c.authority)+'</div>'+
+      (c.note ? '<div class="note">'+esc(c.note)+'</div>' : '')+
+      (c.phone ? '<div class="detail">📞 <a href="tel:'+esc(c.phone.replace(/[^0-9+]/g,''))+'">'+esc(c.phone)+'</a></div>' : '')+
+      (c.email ? '<div class="detail">✉ <a href="mailto:'+esc(c.email)+'">'+esc(c.email)+'</a></div>' : '')+
+      '<a class="btn" href="'+mailto+'">Write to them ↗</a>'+
+    '</div>';
+  }).join('');
+}
+
+function defaultContactBody(p, c){
+  return 'Dear '+c.role+',\n\n'+
+    'I am writing as a citizen of Hyderabad about the ongoing situation at '+p.shortName+'.\n\n'+
+    'As of the most recent public reporting, '+p.treesAlreadyFelled.toLocaleString('en-IN')+
+    ' trees have been felled inside the National Park as part of '+p.projectName+'. '+
+    'Concerns have been raised that prior approvals under the WALTA Act 2002 (designated-officer permission) '+
+    'and Wildlife Protection Act 1972 (Section 29) have not been obtained or made public.\n\n'+
+    'I respectfully ask that your office:\n'+
+    '  1. Halt further felling and construction inside the park and its ESZ until valid approvals are publicly disclosed.\n'+
+    '  2. Publish the WALTA designated-officer order and the WPA S.29 written permission, if obtained.\n'+
+    '  3. Publish the membership and tenure status of the Tree Protection Committee.\n'+
+    '  4. Confirm whether a Social Impact Assessment under RFCTLARR 2013 was conducted.\n\n'+
+    'Thank you for your time.\n\n'+
+    'Sincerely,\n[Your name]\n[Your address]\n';
+}
+
+function renderUpdates(u){
+  const el = $('updatesList');
+  if(!u.items || !u.items.length){
+    el.innerHTML = '<p class="empty">No auto-fetched updates yet. The first scheduled run is 7am or 7pm IST.</p>';
+    return;
+  }
+  el.innerHTML = u.items.map(it=>{
+    const date = it.date ? new Date(it.date).toLocaleDateString('en-IN',{day:'2-digit',month:'short',year:'numeric'}) : '';
+    return ''+
+    '<div class="update-item">'+
+      '<div class="meta">'+esc(date)+(date && it.source?' · ':'')+esc(it.source||'')+'</div>'+
+      '<div class="headline">'+
+        '<a href="'+esc(it.url)+'" target="_blank" rel="noopener noreferrer">'+esc(it.headline)+'</a>'+
+        (it.needsHumanReview ? '<span class="tag pending">⚠ Pending verification</span>' : '')+
+      '</div>'+
+    '</div>';
+  }).join('');
+}
+
+function renderTimeline(p){
+  const sorted = [...p.timeline].reverse();
+  $('timelineList').innerHTML = sorted.map(t=>{
+    const cls = ['legal','contested','violation'].includes(t.type) ? t.type : 'legal';
+    return '<div class="tl-item '+cls+'"><div class="date">'+esc(t.date)+'</div><div class="text">'+esc(t.text)+'</div></div>';
+  }).join('');
+}
+
+function renderViolations(p){
+  $('vtableBody').innerHTML = p.violations.map(v=>{
+    const cls = 'status-'+v.status.replace(/[^A-Z]/g,'');
+    return ''+
+    '<tr>'+
+      '<td class="law" data-label="Law"><div>'+esc(v.law)+'</div><div style="font-size:11.5px;color:var(--muted);font-weight:400">'+esc(v.section)+'</div></td>'+
+      '<td class="what" data-label="Requirement">'+esc(v.what)+'</td>'+
+      '<td data-label="Status"><span class="status-badge '+cls+'">'+esc(v.status)+'</span></td>'+
+      '<td class="detail" data-label="Detail">'+esc(v.detail)+'</td>'+
+    '</tr>';
+  }).join('');
+}
+
+function renderEvidence(p){
+  const rows = (p.evidenceLog||[]);
+  if(!rows.length){ $('evidenceBody').innerHTML = '<tr><td colspan="4" class="empty">No evidence rows yet.</td></tr>'; return; }
+  $('evidenceBody').innerHTML = rows.map(r=>(
+    '<tr>'+
+      '<td data-label="Date">'+esc(r.date)+'</td>'+
+      '<td data-label="Description">'+esc(r.description)+'</td>'+
+      '<td data-label="Source">'+esc(r.source)+'</td>'+
+      '<td data-label="Status"><span class="status-badge '+(r.status==='verified'?'status-INADEQUATE':'status-BREACHED')+'" style="background:'+(r.status==='verified'?'var(--green-soft)':'var(--red-soft)')+';color:'+(r.status==='verified'?'var(--green)':'var(--red)')+'">'+esc(r.status||'')+'</span></td>'+
+    '</tr>'
+  )).join('');
+}
+
+/* ------ modals ------ */
+const RTI_BODY =
+`To,
+The Public Information Officer,
+Office of the Principal Chief Conservator of Forests (HoFF),
+Aranya Bhavan, Saifabad, Hyderabad – 500004
+Telangana Forest Department
+
+Subject: Request for information under the Right to Information Act, 2005
+Re: Tree felling at Kasu Brahmananda Reddy (KBR) National Park for the H-CITI project
+
+Sir/Madam,
+
+Under Section 6 of the RTI Act, 2005, I respectfully request certified copies of the following information pertaining to felling and construction inside KBR National Park and its Eco-Sensitive Zone in connection with the H-CITI (Hyderabad City Innovative and Transformative Infrastructure) project:
+
+  1. The written permission granted by the designated officer of the Hyderabad District WALTA Authority for the felling of trees inside KBR, under the WALTA Act 2002.
+  2. The written permission of the Chief Wild Life Warden, granted under Section 29 of the Wildlife Protection Act, 1972, for destruction / removal of forest produce inside the National Park.
+  3. The membership, date of constitution, and current tenure status of the Tree Protection Committee overseeing the project.
+  4. The species-wise count of trees marked for felling, already felled, marked for translocation, and successfully translocated, with date stamps.
+  5. The Social Impact Assessment report under Section 4 of the RFCTLARR Act 2013, OR the order under Section 10A of the same Act exempting this acquisition; in either case, the file noting that records the basis for that decision.
+  6. The Environmental Impact Assessment, or the determination that no EIA was required under the EIA Notification 2006, for the H-CITI project as a whole, including any internal correspondence regarding splitting of the project into separate EPC packages.
+  7. The replantation and compensatory afforestation plan, including site, species, count, and timeline.
+
+I am prepared to pay the prescribed fee. I would like the information by post / e-mail at the address below.
+
+Yours faithfully,
+[Your name]
+[Address]
+[Email] | [Phone]
+[Date]`;
+
+const COMPLAINT_BODY =
+`To,
+The District Collector,
+Hyderabad District,
+Hyderabad – Telangana
+
+Subject: Complaint regarding alleged statutory violations in the felling of trees at KBR National Park under the H-CITI project
+
+Respected Sir/Madam,
+
+I am writing as a resident of Hyderabad to bring to your urgent attention the ongoing felling of trees and construction activity inside the Kasu Brahmananda Reddy (KBR) National Park, in connection with the H-CITI infrastructure project.
+
+KBR is a notified National Park under the Wildlife Protection Act, 1972 (GO Ms. No. 187 EFS&T, 5 December 1998) and was earlier notified as a Secured Forest under the AP Forest Act, 1967 (GO Ms. No. 22, 3 February 1994). As of recent public reporting, more than 1,500 trees have been felled.
+
+Concerns publicly raised, including by Dr. Lubna Sarwath, indicate that:
+
+  • No valid written approval from the designated officer of the Hyderabad District WALTA Authority has been disclosed under the WALTA Act, 2002.
+  • There is no public record of permission under Section 29 of the WPA, 1972 from the Chief Wild Life Warden.
+  • The Tree Protection Committee responsible for oversight has members continuing beyond their stipulated tenures.
+  • The acquisition of 332 properties (≈65,876 sq yards) was processed by invoking Section 10A of RFCTLARR, 2013, bypassing the Social Impact Assessment and public hearing.
+  • The H-CITI project appears to have been split into separate EPC packages, each below the threshold that would mandate a full Environmental Impact Assessment.
+
+As District Collector, I respectfully request that you:
+
+  1. Initiate an immediate inquiry into the legality of current felling and construction.
+  2. Direct GHMC and the project contractor to halt operations until valid approvals are placed on the public record.
+  3. Confirm in writing to citizens whether the WALTA designated-officer order and WPA S.29 permission exist, and publish them.
+  4. Convene the Tree Protection Committee with validly tenured members.
+
+I would be grateful for an acknowledgement of this complaint and an indication of the steps proposed.
+
+Yours sincerely,
+[Your name]
+[Address]
+[Email] | [Phone]
+[Date]`;
+
+function openModal(kind){
+  const data = kind==='rti'
+    ? { title:'File an RTI', help:'Pre-filled RTI to the PIO of the Telangana Forest Department. Edit the [bracketed] fields and send by post or RTI Online (rtionline.gov.in). Fee usually ₹10 by IPO or DD.', body:RTI_BODY, to:'pccf-hoff@telangana.gov.in', subject:'RTI request — KBR National Park tree felling' }
+    : { title:'Send a complaint', help:'Pre-written letter to the District Collector, Hyderabad. Edit the [bracketed] fields. Send by registered post or to collector_hyd@telangana.gov.in.', body:COMPLAINT_BODY, to:'collector_hyd@telangana.gov.in', subject:'Complaint — alleged statutory violations at KBR National Park' };
+  $('modalTitle').textContent = data.title;
+  $('modalHelp').textContent = data.help;
+  $('modalBody').value = data.body;
+  $('modalMail').href = 'mailto:'+encodeURIComponent(data.to)+
+    '?subject='+encodeURIComponent(data.subject)+
+    '&body='+encodeURIComponent(data.body);
+  $('modalBack').classList.add('open');
+}
+function closeModal(){ $('modalBack').classList.remove('open'); }
+function copyModal(){
+  const ta = $('modalBody');
+  ta.select();
+  document.execCommand('copy');
+  ta.setSelectionRange(0,0);
+  showToast('Copied!');
+}
+
+/* ------ share ------ */
+function sharePage(){
+  const url = location.href;
+  if(navigator.clipboard){
+    navigator.clipboard.writeText(url).then(()=>showToast('Link copied!')).catch(()=>fallbackCopy(url));
+  } else { fallbackCopy(url); }
+}
+function fallbackCopy(text){
+  const ta = document.createElement('textarea'); ta.value=text; document.body.appendChild(ta);
+  ta.select(); document.execCommand('copy'); document.body.removeChild(ta); showToast('Link copied!');
+}
+
+/* ------ toast ------ */
+let toastTimer;
+function showToast(msg){
+  const t = $('toast'); t.textContent = msg; t.classList.add('show');
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(()=>t.classList.remove('show'), 1800);
+}
+
+/* ------ esc ------ */
+function esc(s){
+  return String(s==null?'':s).replace(/[&<>"']/g, m=>({
+    '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'
+  }[m]));
+}
+
+document.addEventListener('keydown', (e)=>{ if(e.key==='Escape') closeModal(); });
+loadData();
+</script>
+</body>
+</html>
